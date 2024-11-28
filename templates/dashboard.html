@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        /* Reset and Base Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0e7ff;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            background-color: #3b82f6;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .nav-link {
+            font-size: 18px;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #2563eb;
+        }
+
+        .logout-link {
+            color: #ffccd5;
+            margin-top: auto;
+            font-size: 18px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .logout-link:hover {
+            color: #ff8493;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h3 {
+            color: #3b82f6;
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #3b82f6;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #2563eb;
+        }
+
+        /* Uploaded Files List */
+        .upload-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .upload-list li {
+            background-color: #f9fafb;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .upload-list li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .link-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .download-link {
+            font-size: 14px;
+            color: #3b82f6;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .download-link:hover {
+            color: #2563eb;
+        }
+
+        /* No Files Message */
+        .no-files {
+            color: #6b7280;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <h2>Navigation</h2>
+        <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+        <a href="{{ url_for('upload') }}" class="nav-link">Upload New File</a>
+        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="container">
+            <h3>Uploaded Files</h3>
+            
+            {% if file_reports %}
+                <ul class="upload-list">
+                    {% for file in file_reports %}
+                        <li>
+                            <div>
+                                <span class="file-name">{{ file.filename }}</span>
+                            </div>
+                            <div class="link-group">
+                                <a href="{{ url_for('download_review', filename=file.filename) }}" class="download-link">Download Review</a>
+                                {% if file.bandit_json_available %}
+                                    <a href="{{ url_for('download_bandit_json', filename=file.filename) }}" class="download-link">Download Bandit JSON Report</a>
+                                {% else %}
+                                    <span class="download-link" style="color: #9ca3af;">JSON Report Not Available</span>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-files">No files uploaded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
